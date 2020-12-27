@@ -1,5 +1,6 @@
 # ansible-haproxy
 🌀 Ansible playbook and role for HAProxy configuration (Bare metal &amp; AWS cloud)
+🎫 https://shubhambhalala.medium.com/haproxy-loadbalancer-configuration-using-ansible-playbooks-and-role-with-testing-on-aws-3d818468626e
 # How to use?
 1. For using playbook:
 
