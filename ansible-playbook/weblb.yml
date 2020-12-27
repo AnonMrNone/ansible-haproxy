@@ -1,0 +1,72 @@
+- name: webserver
+  hosts: webserver
+  vars_files:
+          - webservervar.yml
+  tasks:
+          - name: httpd present
+            package:
+                    name: httpd
+                    state: present
+          - name: php present
+            package:
+                    name: php
+                    state: present
+          - name: web page present
+            copy:
+                    content: '<pre>
+                             <?php
+                             print `/usr/sbin/ifconfig enp0s3`;
+                             ?>
+                             </pre>' 
+                    dest: /var/www/html/index.php
+            notify:
+                    - httpd restart
+          - name: httpd service start
+            service:
+                    name: httpd
+                    state: started
+          - name: firewall allow
+            firewalld:
+                    port: "{{ web_port }}/tcp"
+                    permanent: true
+                    state: enabled
+                    immediate: yes
+  handlers:
+          - name: httpd restart
+            service:
+                    name: httpd
+                    state: restarted
+
+- name: haproxy
+  hosts: loadbalancer
+  vars_files:
+          - lbvar.yml
+          - webservervar.yml
+  tasks:
+          - name: haproxy present
+            package:
+                    name: haproxy
+                    state: present
+          - name: haproxy config
+            template:
+                    src: "haproxy.cfg.j2"
+                    dest: /etc/haproxy/haproxy.cfg
+            notify:
+                    - haproxy restart
+          - name: haproxy service start
+            service:
+                    name: haproxy
+                    state: started
+          - name: firewall allow
+            firewalld:
+                    port: "{{ proxy_port }}/tcp"
+                    permanent: true
+                    state: enabled
+                    immediate: yes
+
+
+  handlers:
+          - name: haproxy restart
+            service:
+                    name: haproxy
+                    state: restarted 

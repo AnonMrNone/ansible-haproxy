@@ -1,0 +1,31 @@
+---
+# tasks file for webserver
+- name: httpd present
+  package:
+          name: httpd
+          state: present
+- name: php present
+  package:
+          name: php
+          state: present
+- name: web page present
+  copy:
+          content: '<pre>
+                   <?php
+                   print `/usr/sbin/ifconfig`;
+                   ?>
+                   </pre>'
+          dest: /var/www/html/index.php
+  notify:
+          - httpd restart
+- name: httpd service start
+  service:
+          name: httpd
+          state: started
+- name: firewall allow
+  firewalld:
+          port: "{{ web_port }}/tcp"
+          permanent: true
+          state: enabled
+          immediate: yes
+  ignore_errors: yes

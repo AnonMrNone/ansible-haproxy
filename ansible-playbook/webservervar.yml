@@ -1,0 +1,2 @@
+web_port: 80
+docu_root: "/var/www/html"

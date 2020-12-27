@@ -1,0 +1,6 @@
+---
+# vars file for haproxyloadbalancer
+proxy_port: 8080
+docu_root: "/var/www/html"
+web_port: 80
+
